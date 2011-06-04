@@ -1,1 +1,3 @@
-Smooth - Made for smead
+Ani.js
+A neat javascript lib for creating CSS animations
+
