@@ -43,13 +43,19 @@
         });
         return expect(ani.ani_o[0].rules[0].vals.tX).toEqual(20);
       });
-      return it('should append translate to ani_o at key 40', function() {
+      it('should append translate to ani_o at key 40', function() {
         ani.keyframe(40).translate({
           tX: 40,
           tY: 20
         });
         expect(ani.ani_o[40].rules[0].vals.tX).toEqual(40);
         return expect(ani.ani_o[40].rules[0].vals.tY).toEqual(20);
+      });
+      return it('should have its ani_o object reflecting translation', function() {
+        ani.translate({
+          tX: 222
+        });
+        return expect(ani.ani_o[0].rules[0].type).toMatch(/translate/);
       });
     });
     describe('get_sheet', function() {

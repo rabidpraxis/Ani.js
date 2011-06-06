@@ -1,14 +1,16 @@
 debug = true
 
 log = (msg...) ->
-  console.log(msg) if debug
+  if jasmine?
+    jasmine.log(msg) if debug
+  else
+    console.log(msg) if debug
 
 ani_methods = [['translate', 'translate3d', ['tX', 'tY', 'tZ']],
                ['rotate', 'rotate', ['rot']]]
 
 class Ani
   constructor: (@ele) ->
-    @self = this
     @.init()
 
   init: ->
@@ -27,8 +29,8 @@ class Ani
   setup_animatable_methods: ->
     for meth in ani_methods
       @.add_method meth[0], (opt) ->
-        @ani_o[@current_keyframe].rules.push({type: meth[1], vals: opt})
-        this
+        @ani_o[@current_keyframe].rules.push({type: meth[0], vals: opt})
+    this
 
   add_method: (method_name, callback) ->
     Ani.prototype[method_name] = callback

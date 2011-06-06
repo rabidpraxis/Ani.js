@@ -40,6 +40,10 @@ describe 'Ani', ->
       expect(ani.ani_o[40].rules[0].vals.tX).toEqual 40
       expect(ani.ani_o[40].rules[0].vals.tY).toEqual 20
 
+    it 'should have its ani_o object reflecting translation', ->
+      ani.translate({tX:222})
+      expect(ani.ani_o[0].rules[0].type).toMatch /translate/
+
   describe 'get_sheet', ->
     it 'should create or return stylesheet node', ->
       expect(ani.sheet.id).toMatch /ani_stylesheet/
