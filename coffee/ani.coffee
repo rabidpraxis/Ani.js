@@ -28,9 +28,12 @@ class Ani
   # Private Methods
   setup_animatable_methods: ->
     for meth in ani_methods
-      @.add_method meth[0], (opt) ->
-        @ani_o[@current_keyframe].rules.push({type: meth[0], vals: opt})
-    this
+      self = @
+      do (self, meth) ->
+        self.add_method meth[0], (opt) ->
+          @ani_o[@current_keyframe].rules.push({type: meth[0], vals: opt})
+          return self
+    return @
 
   add_method: (method_name, callback) ->
     Ani.prototype[method_name] = callback
