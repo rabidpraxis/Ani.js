@@ -26,23 +26,46 @@ describe 'Ani', ->
     expect(ani).toBeDefined()
 
   describe 'animating', ->
-    it 'should have translate function', ->
-      expect(ani.translate).toBeDefined()
+    describe 'global transition', ->
+      it 'should have transition_delay function', ->
+        expect(ani.transition_delay(1)).toBeDefined()
+      
+      it 'should change the instances delay value', ->
+        ani.transition_delay(1)
+        expect(ani.transition.delay).toEqual 1
 
-    it 'should append translate to ani_o at key 0', ->
-      ani.keyframe(0)
-         .translate({tX:20})
-      expect(ani.ani_o[0].rules[0].vals.tX).toEqual 20
+      it 'should change the instances ease value', ->
+        ani.transition_ease('ease-in')
+        expect(ani.transition.ease).toEqual 'ease-in'
 
-    it 'should append translate to ani_o at key 40', ->
-      ani.keyframe(40)
-         .translate({tX:40, tY:20})
-      expect(ani.ani_o[40].rules[0].vals.tX).toEqual 40
-      expect(ani.ani_o[40].rules[0].vals.tY).toEqual 20
+    describe 'translate animation', ->
+      it 'should have translate function', ->
+        expect(ani.translate).toBeDefined()
 
-    it 'should have its ani_o object reflecting translation', ->
-      ani.translate({tX:222})
-      expect(ani.ani_o[0].rules[0].type).toMatch /translate/
+      it 'should append translate to ani_o at key 0', ->
+        ani.keyframe(0)
+           .translate({tX:20})
+        expect(ani.ani_o[0].rules.translate.tX).toEqual 20
+
+      it 'should append translate to ani_o at key 40', ->
+        ani.keyframe(40)
+           .translate({tX:40, tY:20})
+        expect(ani.ani_o[40].rules.translate.tX).toEqual 40
+        expect(ani.ani_o[40].rules.translate.tY).toEqual 20
+
+      it 'should have its ani_o object reflecting translation', ->
+        ani.translate({tX:222})
+        expect(ani.ani_o[0].rules.translate).toBeDefined()
+
+  describe 'creating CSS animation', ->
+    it 'should output correct translate css animation', ->
+      ani.translate({tX:230, tY:10})
+         .keyframe(100)
+         .translate({tX:100, tY:400})
+         .keyframe(7)
+         .translate({tX:7})
+      expectant_str = /7% { translate3d\( 7px, 0px, 0px \); }/
+      expect(ani.create_keyframe_block()).toMatch expectant_str
 
   describe 'get_sheet', ->
     it 'should create or return stylesheet node', ->
