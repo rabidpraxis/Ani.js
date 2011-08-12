@@ -1,21 +1,40 @@
 (function() {
   /*
-  How it should work:
-  ele = new Ani(); // Create Base Ani instance
-  ele.keyframe(20)
-       .translate3d({tX:200})
-     .keyframe(100)
-       .translate3d({tX:1000})
-     .transition_delay(0)
-     .transition_ease('ease-in')
-     .transition_time(2)
+  - How it should work:
+    ani = new Ani(); // Create Base Ani instance
+    ani.keyframe(20)
+         .translate3d({tx:200})
+       .keyframe(100)
+         .translate3d({tx:1000})
+       .transition_delay(0)
+       .transition_ease('ease-in')
+       .transition_time(2)
   
-  // Inherit ani properties
-  ele2 = new Ani('#selector', ele)
-  ele2.transition_time('+1') // + operator tells Ani to add a milisecond
   
-  // Create Ani Chain
-  new Ani('#selector2', ele2).transition_time('+1').run(true) // run inherited animations too
+  - Allow for componential properties:
+    - Translate (x, y, z)
+    - Color (r, g, b, a)
+  
+  - Should contain object values for multiple paramaters:
+    .property({component:value})
+    .property({component:'+value'})
+  or
+  - if it accepts single value, object notation is unnessecary:
+    .property(value)
+    .property('value')
+      
+  - Finished animation callback
+    ani.finished ->
+      do something
+  
+  - Inherit ani properties
+    ele2 = new Ani('#selector', ele)
+    ele2.transition_time('+1') // + operator tells Ani to add a milisecond
+  
+  - Create Ani Chain
+    new Ani('#selector2', ele2)
+          .transition_time('+1')
+          .run(true) // run inherited animations too
   */  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
@@ -43,49 +62,55 @@
           return expect(ani.transition.delay).toEqual(1);
         });
         return it('should change the instances ease value', function() {
-          ani.transition_ease('ease-in');
-          return expect(ani.transition.ease).toEqual('ease-in');
+          ani.transition_timing_function('ease-in');
+          return expect(ani.transition.timing_function).toEqual('ease-in');
         });
       });
       return describe('translate animation', function() {
         it('should have translate function', function() {
           return expect(ani.translate).toBeDefined();
         });
-        it('should append translate to ani_o at key 0', function() {
+        it('should append translate to keyframe_rules at key 0', function() {
           ani.keyframe(0).translate({
-            tX: 20
+            tx: 20
           });
-          return expect(ani.ani_o[0].rules.translate.tX).toEqual(20);
+          return expect(ani.keyframe_rules[0].rules.translate.tx).toEqual(20);
         });
-        it('should append translate to ani_o at key 40', function() {
+        it('should append translate to keyframe_rules at key 40', function() {
           ani.keyframe(40).translate({
-            tX: 40,
-            tY: 20
+            tx: 40,
+            ty: 20
           });
-          expect(ani.ani_o[40].rules.translate.tX).toEqual(40);
-          return expect(ani.ani_o[40].rules.translate.tY).toEqual(20);
+          expect(ani.keyframe_rules[40].rules.translate.tx).toEqual(40);
+          return expect(ani.keyframe_rules[40].rules.translate.ty).toEqual(20);
         });
-        return it('should have its ani_o object reflecting translation', function() {
+        return it('should have its keyframe_rules object reflecting translation', function() {
           ani.translate({
-            tX: 222
+            tx: 222
           });
-          return expect(ani.ani_o[0].rules.translate).toBeDefined();
+          return expect(ani.keyframe_rules[0].rules.translate).toBeDefined();
         });
       });
     });
     describe('creating CSS animation', function() {
-      return it('should output correct translate css animation', function() {
+      it('should output correct translate css animation', function() {
         var expectant_str;
         ani.translate({
-          tX: 230,
-          tY: 10
+          tx: 230,
+          ty: 10
         }).keyframe(100).translate({
-          tX: 100,
-          tY: 400
+          tx: 100,
+          ty: 400
         }).keyframe(7).translate({
-          tX: 7
+          tx: 7
         });
-        expectant_str = /7% { translate3d\( 7px, 0px, 0px \); }/;
+        expectant_str = /7% { translate3d\( 7px 0px 0px \); }/;
+        return expect(ani.create_keyframe_block()).toMatch(expectant_str);
+      });
+      return it('should be able to add single amount to animations', function() {
+        var expectant_str;
+        ani.rotate(12);
+        expectant_str = /0% { rotate\( 12rad \); }/;
         return expect(ani.create_keyframe_block()).toMatch(expectant_str);
       });
     });
@@ -103,7 +128,7 @@
         });
         return expect(ani.awesome()).toMatch(method_return);
       });
-      return it('should have same method when inhreited', function() {
+      it('should have same method when inhreited', function() {
         var Ani2, ani2;
         ani.add_method('awesome', function() {
           return 'test';
@@ -117,6 +142,9 @@
         })();
         ani2 = new Ani2('test');
         return expect(ani2.awesome()).toMatch('test');
+      });
+      return describe('Translate Methods', function() {
+        return it('should work right');
       });
     });
   });
