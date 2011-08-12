@@ -3,17 +3,20 @@
     <style type="text/css">
       @-webkit-keyframes testing {
         0% {
+          /* -webkit-transform: translate(722px, 0px); */
           left: 0px;
+          background-color: rgba(100,100,0,.75);
         }
         100% {
-          left: 400px;
-        }
-        10% {
-          left: 200px;
+          background-color: rgba(0,100,0,.75);
+          left: 722px;
+          /* -webkit-transform: rotate(20deg) translate(722px, 0px); */
+          -webkit-transform: rotate(20deg);
         }
       }
       #box {
         position: absolute;
+        border: 1px #444 solid;
         width: 200px;
         height: 200px;
         background-color: #aaa;
@@ -22,6 +25,28 @@
   </head>
   <body>
     <div id="box"></div>
-    
   </body>
+
+  <script type="text/javascript">
+    // yay for closures
+    (function() {
+     var myBox = document.querySelector('#box'),
+         animating = false;
+
+     myBox.onclick = function() {
+       var that = this;
+       animating = true;
+       console.log('clicked');
+       this.style.webkitAnimation = 'testing 1s';
+       setTimeout(function() { that.style.webkitAnimationPlayState = 'paused'; }, 500);
+       this.addEventListener('webkitAnimationEnd', function(){
+         console.log('ended');
+         this.style.webkitAnimationPlayState = 'paused';
+       },false);
+       this.addEventListener(animationend, function(){
+         callfunction()
+       },false);
+     }
+   }())
+  </script>
 </html>
