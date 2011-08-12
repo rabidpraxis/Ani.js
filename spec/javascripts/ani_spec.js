@@ -104,7 +104,8 @@
         }).keyframe(7).translate({
           tx: 7
         });
-        expectant_str = /7% { translate3d\( 7px 0px 0px \); }/;
+        expectant_str = /7% { jtranslate3d\( 7px 0px 0px \); }/;
+        log('string');
         return expect(ani.create_keyframe_block()).toMatch(expectant_str);
       });
       return it('should be able to add single amount to animations', function() {
