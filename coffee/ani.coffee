@@ -1,3 +1,11 @@
+debug = true
+
+log = (msg...) ->
+  if jasmine?
+    jasmine.log(msg) if debug
+  else
+    console.log(msg) if debug
+  
 #===  ani_methods  ========================================================{{{1
 ani_methods = {
   border_top_width: ['border-top-width: %', ['px'],             ['px', '%']],
