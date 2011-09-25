@@ -1,25 +1,28 @@
 <html>
   <head>
     <style type="text/css">
-      @-webkit-keyframes testing {
-        0% {
-          /* -webkit-transform: translate(722px, 0px); */
-          left: 0px;
-          background-color: rgba(100,100,0,.75);
-        }
-        100% {
-          background-color: rgba(0,100,0,.75);
-          left: 722px;
-          /* -webkit-transform: rotate(20deg) translate(722px, 0px); */
-          -webkit-transform: rotate(20deg);
-        }
-      }
       #box {
+        /* -webkit-animation-name: testing; */
+        /* -webkit-animation-duration: 1s; */
+        /* -webkit-animation-fill-mode: forwards; */
+
         position: absolute;
         border: 1px #444 solid;
         width: 200px;
         height: 200px;
         background-color: #aaa;
+      }
+      @-webkit-keyframes testing {
+        from {
+          -webkit-box-shadow: rgba(0,0,0, .4) 0px 0px 10px;
+          background-color: rgba(100,100,0,.75);
+        }
+        to {
+          background-color: rgba(0,100,0,.75);
+          -webkit-box-shadow: rgba(0,0,0, .4) 10px 10px 10px;
+          -webkit-transform: translateX(700px) rotate(20deg);
+          -webkit-transform-origin: translateX(700px);
+        }
       }
     </style>
   </head>
@@ -37,15 +40,20 @@
        var that = this;
        animating = true;
        console.log('clicked');
+       this.style.webkitAnimationFillMode = 'forwards';
        this.style.webkitAnimation = 'testing 1s';
-       setTimeout(function() { that.style.webkitAnimationPlayState = 'paused'; }, 500);
+       // setTimeout(function() { that.style.webkitAnimationPlayState = 'paused'; }, 500);
+       this.addEventListener('webkitAnimationIteration', function () {
+         console.log('iteration ended');
+         this.style.webkitAnimationPlayState = 'paused';
+       })
        this.addEventListener('webkitAnimationEnd', function(){
          console.log('ended');
          this.style.webkitAnimationPlayState = 'paused';
        },false);
-       this.addEventListener(animationend, function(){
-         callfunction()
-       },false);
+       // this.addEventListener(animationend, function(){
+       //   callfunction()
+       // },false);
      }
    }())
   </script>

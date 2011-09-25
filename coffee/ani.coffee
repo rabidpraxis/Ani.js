@@ -5,34 +5,23 @@ log = (msg...) ->
     jasmine.log(msg) if debug
   else
     console.log(msg) if debug
-  
-#===  ani_methods  ========================================================{{{1
-ani_methods = {
-  border_top_width: ['border-top-width: %', ['px'],             ['px', '%']],
-  border_width:     ['border-width: %',     ['px'],             ['px', '%']],
-  translate:        ['translate3d( % )',    ['tx', 'ty', 'tz'], ['px', '%']],
-  rotate:           ['rotate( % )',         ['rot'],            ['rad']]
-}
-#===========================================================================}}}
+ 
+#===  ani_property_methods  ==============================================={{{1
+# method_name: [ css-property-name: %placement,
+#                [ argument object mappings ],
+#                [ types of values allowed ]
+#
+ani_property_methods =
+  border_top_width: ['border-top-width: %;', ['px'],             ['px', '%']]
+  border_width:     ['border-width: %;',     ['px'],             ['px', '%']]
 
-#===  transform_methods  =================================================={{{1
-tranform_methods = [
-  'matrix',
-  'rotate',
-  'scale',
-  'scaleX',
-  'scaleY',
-  'skew',
-  'skewX',
-  'skewY',
-  'translate',
-  'translateX',
-  'translateY'
-]
-#===========================================================================}}}
-#===  trans_methods  ======================================================{{{1
+ani_function_methods =
+  translate:        ['translate3d( % )',    ['x', 'y', 'z'], ['px', '%']]
+  scale:            ['scale3d( % )',        ['x', 'y', 'z'], ['px', '%']]
+  rotate:           ['rotate( % )',         ['rot'],            ['rad']]
+
 # TODO: needs refactoring
-trans_methods = [
+ani_transition_methods = [
   ['transition_delay',           'delay'],
   ['transition_duration',        'duration'],
   ['transition_iteration_count', 'iteration-count'],
@@ -44,7 +33,7 @@ trans_methods = [
 
 class Ani
   #---  constructor()  ----------------------------------------------------{{{1
-  constructor: (@ele) ->
+  constructor: (@ele, @options) ->
     @.init()
   #-------------------------------------------------------------------------}}}
   #---  init()  -----------------------------------------------------------{{{1
@@ -80,7 +69,7 @@ class Ani
   #---  Private Methods  ------------------------------------------------------
   #---  setup_transition_methods()  ---------------------------------------{{{1
   setup_transition_methods: ->
-    for meth in trans_methods
+    for meth in ani_transition_methods
       self = @
       do (self, meth) ->
         self.add_method meth[0], (opt) ->
@@ -89,13 +78,20 @@ class Ani
   #-------------------------------------------------------------------------}}}
   #---  setup_animatable_methods()  ---------------------------------------{{{1
   setup_animatable_methods: ->
-    for method_name, method_opts of ani_methods
+    for method_name, method_opts of ani_function_methods
       self = @
       do (self, method_name, method_opts) ->
         self.add_method method_name, (opt) ->
           @keyframe_rules[@current_keyframe].rules[method_name] = opt
           self
   #-------------------------------------------------------------------------}}}
+  setup_property_methods: ->
+    for method_name, method_opts of ani_function_methods
+      self = @
+      do (self, method_name, method_opts) ->
+        self.add_method method_name, (opt) ->
+          @keyframe_rules[@current_keyframe].rules[method_name] = opt
+          self
 
   #---  add_method()  -----------------------------------------------------{{{1
   add_method: (method_name, callback) ->
@@ -114,19 +110,19 @@ class Ani
   #-------------------------------------------------------------------------}}}
   #---  format_css_rule()  ------------------------------------------------{{{1
   format_css_rule = (prop, property_obj) ->
-    input_options = ani_methods[prop][1]
+    input_options = ani_function_methods[prop][1]
     rule_opt_str = ""
     if input_options.length > 1
       # Multiple Values
       for prop_val, i in input_options
         rule = property_obj[prop_val] or 0
-        rule += (ani_methods[prop][2])[0]
+        rule += (ani_function_methods[prop][2])[0]
         rule += ' ' if i != input_options.length - 1
         rule_opt_str += rule
     else
       # Single Value
-      rule_opt_str = property_obj + ani_methods[prop][2]
-    ani_methods[prop][0].replace('%', rule_opt_str)
+      rule_opt_str = property_obj + ani_function_methods[prop][2]
+    ani_function_methods[prop][0].replace('%', rule_opt_str)
   #-------------------------------------------------------------------------}}}
   #---  get_ani_sheet()  --------------------------------------------------{{{1
   get_ani_sheet = ->
@@ -138,3 +134,5 @@ class Ani
   #-------------------------------------------------------------------------}}}
 
 window.Ani = Ani
+
+# vim:fdm=marker

@@ -1,6 +1,44 @@
 (function() {
   /*
-  - How it should work:
+  Based on Blueprints (need a better term) that can be pulled and added to 
+  other objects with deltas applied to the properties.
+  
+  - Allow for animatable functions:
+    - matrix(m11, m12, m21, m22, tX, tY)
+    - matrix3d(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m31, m33)
+    - perspective(depth)
+    - translate3d(x, y, z)
+    - scale3d(scaleX, scaleY, scaleZ)
+    - rotate3d(x, y, z, angle)
+    - skew(angleX [, angleY])
+  
+  - Allow for multi use functions:
+    - color
+      - rgb(r, g, b)
+      - rgba(r, g, b, a) 
+      - hsv(h, s, v)
+    - gradient(type, start_point, end_point, / stop...)
+    - gradient(type, inner_center, inner_radius, outer_center, outer_radius, / stop...)
+    - color-stop(stop, color)
+  
+  - Should contain object values for multiple paramaters:
+    .property({component:value})
+    .property({component:'+value'}) - Delta Change
+  or
+  - if it accepts single value, object notation is unnessecary:
+    .property(value)
+    .property('value')
+      
+  * Delta Changes
+  These changes are the key to the success of this pattern. This allows for nice
+  quick animation tweaks on objects that inherit the blueprint of the other object.
+  These delta changes are applied only once and immediatly after they are called.
+  
+  - Finished animation callback
+    ani.finished ->
+      do something
+  */
+  /*
     ani = new Ani(); // Create Base Ani instance
     ani.keyframe(20)
          .translate3d({tx:200})
@@ -10,32 +48,23 @@
        .transition_ease('ease-in')
        .transition_time(2)
   
-  
-  - Allow for componential properties:
-    - Translate (x, y, z)
-    - Color (r, g, b, a)
-  
-  - Should contain object values for multiple paramaters:
-    .property({component:value})
-    .property({component:'+value'})
-  or
-  - if it accepts single value, object notation is unnessecary:
-    .property(value)
-    .property('value')
-      
-  - Finished animation callback
-    ani.finished ->
-      do something
-  
   - Inherit ani properties
-    ele2 = new Ani('#selector', ele)
-    ele2.transition_time('+1') // + operator tells Ani to add a milisecond
+    ani2 = new Ani('#selector', ani)
+    ani2.transition_time('+1') // + operator tells Ani to add a milisecond
+  
+  - Integrated CSS functions into properties
+    ani.border_color(Ani.rgba(255,255,255, 0.1))
+    or
+    ani.border_color({r:255, g:255, b:255, a: 0.1})
+    which
+    ani2.border_color({a: '+.2'})
   
   - Create Ani Chain
     new Ani('#selector2', ele2)
           .transition_time('+1')
           .run(true) // run inherited animations too
-  */  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
+  */
+  var __hasProp = Object.prototype.hasOwnProperty, __extends = function(child, parent) {
     for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; }
     function ctor() { this.constructor = child; }
     ctor.prototype = parent.prototype;
@@ -72,9 +101,10 @@
         });
         it('should append translate to keyframe_rules at key 0', function() {
           ani.keyframe(0).translate({
-            tx: 20
+            x: 20
           });
-          return expect(ani.keyframe_rules[0].rules.translate.tx).toEqual(20);
+          log(ani.keyframe_rules[0].rules.translate.x);
+          return expect(ani.keyframe_rules[0].rules.translate.x).toEqual(20);
         });
         it('should append translate to keyframe_rules at key 40', function() {
           ani.keyframe(40).translate({
@@ -93,21 +123,6 @@
       });
     });
     describe('creating CSS animation', function() {
-      it('should output correct translate css animation', function() {
-        var expectant_str;
-        ani.translate({
-          tx: 230,
-          ty: 10
-        }).keyframe(100).translate({
-          tx: 100,
-          ty: 400
-        }).keyframe(7).translate({
-          tx: 7
-        });
-        expectant_str = /7% { jtranslate3d\( 7px 0px 0px \); }/;
-        log('string');
-        return expect(ani.create_keyframe_block()).toMatch(expectant_str);
-      });
       return it('should be able to add single amount to animations', function() {
         var expectant_str;
         ani.rotate(12);
@@ -120,6 +135,7 @@
         return expect(ani.sheet.id).toMatch(/ani_stylesheet/);
       });
     });
+    describe('parse current keyframe objects', function() {});
     return describe('dynamic methods', function() {
       it('should have a new method created on the fly', function() {
         var method_return;
@@ -129,7 +145,7 @@
         });
         return expect(ani.awesome()).toMatch(method_return);
       });
-      it('should have same method when inhreited', function() {
+      return it('should have same method when inhreited', function() {
         var Ani2, ani2;
         ani.add_method('awesome', function() {
           return 'test';
@@ -143,9 +159,6 @@
         })();
         ani2 = new Ani2('test');
         return expect(ani2.awesome()).toMatch('test');
-      });
-      return describe('Translate Methods', function() {
-        return it('should work right');
       });
     });
   });
