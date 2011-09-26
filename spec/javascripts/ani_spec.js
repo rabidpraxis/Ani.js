@@ -69,8 +69,57 @@
     beforeEach(function() {
       return ani = new Ani();
     });
-    return it('should return an object', function() {
+    it('should return an object', function() {
       return expect(ani).toBeDefined();
+    });
+    describe('#keyframe', function() {
+      it('should allow for keyframes to be set', function() {
+        ani.keyframe(10);
+        return expect(ani.current_keyframe).toEqual(10);
+      });
+      it('should allow for 100 percent to be set', function() {
+        ani.keyframe(100);
+        return expect(ani.current_keyframe).toEqual(100);
+      });
+      return it('should start with 0', function() {
+        return expect(ani.current_keyframe).toEqual(0);
+      });
+    });
+    describe('Solid Properties', function() {
+      it('should store border width', function() {
+        ani.border_width(20);
+        return expect(ani.keyframe_group[0]['border_width'].value).toEqual(20);
+      });
+      it('should store height', function() {
+        ani.height(9);
+        return expect(ani.keyframe_group[0]['height'].value).toEqual(9);
+      });
+      it('should store colors', function() {
+        ani.color('#fff');
+        return expect(ani.keyframe_group[0]['color'].value).toMatch(/fff/);
+      });
+      it('should store functions', function() {
+        ani.colorRGB({
+          r: 155,
+          g: 255,
+          b: 120
+        });
+        return expect(ani.keyframe_group[0]['color'].value.r).toEqual(155);
+      });
+      return it('should store multiple functions', function() {
+        ani.translateX(20).rotateX(20);
+        return expect(ani.keyframe_group[0]['rotateX'].value).toEqual(20);
+      });
+    });
+    return describe('String Properties', function() {
+      it('should store border width', function() {
+        ani.border_width('20px');
+        return expect(ani.keyframe_group[0]['border_width'].value).toEqual(20);
+      });
+      return it('should store height', function() {
+        ani.height('800px');
+        return expect(ani.keyframe_group[0]['height'].value).toEqual(800);
+      });
     });
   });
 }).call(this);
