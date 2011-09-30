@@ -98,17 +98,9 @@
         ani.color('#fff');
         return expect(ani.keyframe_group[0]['color'].value).toMatch(/fff/);
       });
-      it('should store functions', function() {
-        ani.colorRGB({
-          r: 155,
-          g: 255,
-          b: 120
-        });
-        return expect(ani.keyframe_group[0]['color'].value.r).toEqual(155);
-      });
-      return it('should store multiple functions', function() {
-        ani.translateX(20).rotateX(20);
-        return expect(ani.keyframe_group[0]['rotateX'].value).toEqual(20);
+      return it('should store functions', function() {
+        ani.colorRGB(155, 100, 100);
+        return expect(ani.keyframe_group[0]['colorRGB'].value.r).toEqual(155);
       });
     });
     describe('String Properties', function() {

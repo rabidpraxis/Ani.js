@@ -103,13 +103,13 @@ describe 'Ani', ->
       expect(ani.keyframe_group[0]['color'].value).toMatch /fff/
 
     it 'should store functions', ->
-      ani.colorRGB({r:155, g:255, b:120})
-      expect(ani.keyframe_group[0]['color'].value.r).toEqual 155
+      ani.colorRGB(155, 100, 100)
+      expect(ani.keyframe_group[0]['colorRGB'].value.r).toEqual 155
 
-    it 'should store multiple functions', ->
-      ani.translateX(20)
-         .rotateX(20)
-      expect(ani.keyframe_group[0]['rotateX'].value).toEqual 20
+    # it 'should store multiple functions', ->
+    #   ani.translateX(20)
+    #      .rotateX(20)
+    #   expect(ani.keyframe_group[0]['rotateX'].value).toEqual 20
   #-------------------------------------------------------------------------}}}
 
   describe 'String Properties', ->

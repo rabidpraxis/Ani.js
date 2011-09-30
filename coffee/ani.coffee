@@ -9,7 +9,7 @@ log = (msg...) ->
 #===  Property  ==========================================================={{{1
 class Property
   constructor: (@input) ->
-    @value = @.parse_value @input
+    @value = @.parse_value @input[0]
 
   property_types: ->
     [
@@ -51,61 +51,68 @@ class Property
 
 #===========================================================================}}}
   
+class ColorRGB extends Property
+  constructor: (@input) ->
+    @value = @.parse_value
+      r: @input[0]
+      g: @input[1]
+      b: @input[2]
+
 do ->
 
-  props = [
-    ['border_width', 'Property']
-    ['height', 'Property']
-    ['color', 'Property']
-    ['colorRGB', 'Property']
+  property_groups = [
+  # ['Method Name',   'CSS name',      Property Class]
+    ['height',        'height',        Property]
+    ['border_width',  'border-width',  Property]
+    ['color',         'color',         Property]
+    ['colorRGB',      'color',         ColorRGB]
   ]
 
   class window.Ani
     constructor: (@options) ->
-      @keyframe_group = []
       @.init()
 
-      # stArr = props[0]
-      # @[stArr[0]] = (prop) =>
-      #   @.add_property {"st": new Property(prop)}
-
     init: ->
+      @keyframe_group = []
       @.keyframe 0
+      @.setup_methods()
 
     keyframe: (key) ->
       @current_keyframe = key
       @keyframe_group[key] = @keyframe_group[key] || []
+      this
 
-    #---  Properties  -----------------------------------------------------------
-    border_width: (width) ->
-      @.add_property 'border_width', new Property(width)
+    setup_methods: ->
+      for meth_props in property_groups
+        @.wrap_prop_method meth_props[0], meth_props[2]
+      this
 
-    height: (height) ->
-      @.add_property 'height', new Property(height)
+    wrap_prop_method: (prop_name, func) ->
+      @.add_method prop_name, (value...) =>
+        @.add_property prop_name, new func(value)
+        
+    add_method: (method_name, callback) ->
+      Ani.prototype[method_name] = callback
+      this
 
-    color: (color) ->
-      @.add_property 'color', new Property(color)
+    #---  prop methods  ---------------------------------------------------{{{1
+    # translateX: (x) ->
+    #   @.add_property 'translateX', new Property(x)
 
-    colorRGB: (color) ->
-      @.add_property 'color', new Property(color)
+    # rotateX: (x) ->
+    #   @.add_property 'rotateX', new Property(x)
 
-    translateX: (x) ->
-      @.add_property 'translateX', new Property(x)
-
-    rotateX: (x) ->
-      @.add_property 'rotateX', new Property(x)
-
-    translate3d: (pos) ->
-      @.translateX(pos.x)
-      @.translateY(pos.y)
-      @.translateZ(pos.z)
-      
+    # translate3d: (pos) ->
+    #   @.translateX(pos.x)
+    #   @.translateY(pos.y)
+    #   @.translateZ(pos.z)
+    #-----------------------------------------------------------------------}}}
 
   #===  Private  ================================================================
 
     add_property: (name, content) ->
       @keyframe_group[@current_keyframe][name] = content
-      @
+      this
 
 
 # vim:fdm=marker
