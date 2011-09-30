@@ -120,8 +120,13 @@ describe 'Ani', ->
     it 'should store height', ->
       ani.height('800px')
       expect(ani.keyframe_group[0]['height'].value).toEqual 800
+
+  describe 'Create css rules', ->
+
+    
+
+
       
-  
   
 #
 # vim:fdm=marker

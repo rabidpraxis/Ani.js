@@ -6,20 +6,39 @@ log = (msg...) ->
   else
     console.log(msg) if debug
 #===========================================================================}}}
-
+#===  Property  ==========================================================={{{1
 class Property
   constructor: (@input) ->
     @value = @.parse_value @input
 
+  property_types: ->
+    [
+      'length',
+      'percentage',
+      'number',
+      'integer',
+      'visibility',
+      'hexcolor'
+    ]
+
+  function_types: ->
+    [
+      'gradient',
+      'rgbcolor',
+      'hsvcolor',
+      'rgbacolor',
+      'shadow'
+    ]
+
   parse_value: (value) ->
     if typeof(value) is 'string'
-      @.parse_string(value)
+      @.parse_value_from_string(value)
     else if typeof(value) is 'number'
       value
     else if typeof(value) is 'object'
       value
 
-  parse_string: (str) ->
+  parse_value_from_string: (str) ->
     if @.str_is_type(str, 'px')
       @type = 'length'
       parseInt(str.substring(0, str.length-2))
@@ -29,42 +48,64 @@ class Property
 
   str_is_type: (str, type) ->
     str.indexOf(type) isnt -1
+
+#===========================================================================}}}
   
-class window.Ani
-  constructor: (@options) ->
-    @keyframe_group = []
-    @.init()
+do ->
 
-  init: ->
-    @current_keyframe = 0
+  props = [
+    ['border_width', 'Property']
+    ['height', 'Property']
+    ['color', 'Property']
+    ['colorRGB', 'Property']
+  ]
 
-  keyframe: (key) ->
-    @current_keyframe = key
+  class window.Ani
+    constructor: (@options) ->
+      @keyframe_group = []
+      @.init()
 
-  border_width: (width) ->
-    @.current_keyframe_group {border_width: new Property(width)}
+      # stArr = props[0]
+      # @[stArr[0]] = (prop) =>
+      #   @.add_property {"st": new Property(prop)}
 
-  height: (height) ->
-    @.current_keyframe_group {height: new Property(height)}
+    init: ->
+      @.keyframe 0
 
-  color: (color) ->
-    @.current_keyframe_group {color: new Property(color)}
+    keyframe: (key) ->
+      @current_keyframe = key
+      @keyframe_group[key] = @keyframe_group[key] || []
 
-  colorRGB: (color) ->
-    @.current_keyframe_group {color: new Property(color)}
+    #---  Properties  -----------------------------------------------------------
+    border_width: (width) ->
+      @.add_property 'border_width', new Property(width)
 
-  translateX: (x) ->
-    @.current_keyframe_group {translateX: new Property(x)}
+    height: (height) ->
+      @.add_property 'height', new Property(height)
 
-  rotateX: (x) ->
-    @.current_keyframe_group {rotateX: new Property(x)}
+    color: (color) ->
+      @.add_property 'color', new Property(color)
 
-#===  Private  ================================================================
+    colorRGB: (color) ->
+      @.add_property 'color', new Property(color)
 
-  current_keyframe_group: (content) ->
-    @keyframe_group[@current_keyframe] = content
-    @
+    translateX: (x) ->
+      @.add_property 'translateX', new Property(x)
 
+    rotateX: (x) ->
+      @.add_property 'rotateX', new Property(x)
+
+    translate3d: (pos) ->
+      @.translateX(pos.x)
+      @.translateY(pos.y)
+      @.translateZ(pos.z)
+      
+
+  #===  Private  ================================================================
+
+    add_property: (name, content) ->
+      @keyframe_group[@current_keyframe][name] = content
+      @
 
 
 # vim:fdm=marker

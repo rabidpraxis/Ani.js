@@ -111,7 +111,7 @@
         return expect(ani.keyframe_group[0]['rotateX'].value).toEqual(20);
       });
     });
-    return describe('String Properties', function() {
+    describe('String Properties', function() {
       it('should store border width', function() {
         ani.border_width('20px');
         return expect(ani.keyframe_group[0]['border_width'].value).toEqual(20);
@@ -121,5 +121,6 @@
         return expect(ani.keyframe_group[0]['height'].value).toEqual(800);
       });
     });
+    return describe('Create css rules', function() {});
   });
 }).call(this);
