@@ -76,6 +76,7 @@ describe 'Ani', ->
   it 'should return an object', ->
     expect(ani).toBeDefined()
 
+  #---  Keyframes  --------------------------------------------------------{{{1
   describe '#keyframe', ->
     it 'should allow for keyframes to be set', ->
       ani.keyframe(10)
@@ -87,7 +88,7 @@ describe 'Ani', ->
 
     it 'should start with 0', ->
       expect(ani.current_keyframe).toEqual 0
-
+  #-------------------------------------------------------------------------}}}
   #---  Solid Properties  -------------------------------------------------{{{1
   describe 'Solid Properties', ->
     it 'should store border width', ->
@@ -104,14 +105,18 @@ describe 'Ani', ->
 
     it 'should store functions', ->
       ani.colorRGB(155, 100, 100)
-      expect(ani.keyframe_group[0]['colorRGB'].value.r).toEqual 155
+      expect(ani.keyframe_group[0]['color'].value.r).toEqual 155
 
-    # it 'should store multiple functions', ->
-    #   ani.translateX(20)
-    #      .rotateX(20)
-    #   expect(ani.keyframe_group[0]['rotateX'].value).toEqual 20
+    it 'should allow translate functions', ->
+      ani.translateX(20)
+      expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual 20
+      
+    it 'should store multiple functions', ->
+      ani.translateX(20)
+         .rotateX(20)
+      expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual 20
   #-------------------------------------------------------------------------}}}
-
+  #---  String Properties  ------------------------------------------------{{{1
   describe 'String Properties', ->
     it 'should store border width', ->
       ani.border_width('20px')
@@ -120,6 +125,11 @@ describe 'Ani', ->
     it 'should store height', ->
       ani.height('800px')
       expect(ani.keyframe_group[0]['height'].value).toEqual 800
+
+    it 'should store single property translation', ->
+      ani.translateY('30px')
+      expect(ani.keyframe_group[0]['translate3d'].value.y).toEqual 30
+  #-------------------------------------------------------------------------}}}
 
   describe 'Create css rules', ->
 

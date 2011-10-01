@@ -98,9 +98,17 @@
         ani.color('#fff');
         return expect(ani.keyframe_group[0]['color'].value).toMatch(/fff/);
       });
-      return it('should store functions', function() {
+      it('should store functions', function() {
         ani.colorRGB(155, 100, 100);
-        return expect(ani.keyframe_group[0]['colorRGB'].value.r).toEqual(155);
+        return expect(ani.keyframe_group[0]['color'].value.r).toEqual(155);
+      });
+      it('should allow translate functions', function() {
+        ani.translateX(20);
+        return expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual(20);
+      });
+      return it('should store multiple functions', function() {
+        ani.translateX(20).rotateX(20);
+        return expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual(20);
       });
     });
     describe('String Properties', function() {
@@ -108,9 +116,13 @@
         ani.border_width('20px');
         return expect(ani.keyframe_group[0]['border_width'].value).toEqual(20);
       });
-      return it('should store height', function() {
+      it('should store height', function() {
         ani.height('800px');
         return expect(ani.keyframe_group[0]['height'].value).toEqual(800);
+      });
+      return it('should store single property translation', function() {
+        ani.translateY('30px');
+        return expect(ani.keyframe_group[0]['translate3d'].value.y).toEqual(30);
       });
     });
     return describe('Create css rules', function() {});
