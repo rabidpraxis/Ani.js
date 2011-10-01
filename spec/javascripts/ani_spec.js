@@ -125,6 +125,20 @@
         return expect(ani.keyframe_group[0]['translate3d'].value.y).toEqual(30);
       });
     });
-    return describe('Create css rules', function() {});
+    return describe('Create css rules', function() {
+      return describe('Ani stylesheet', function() {
+        it('should create a new sheet', function() {
+          var sheet;
+          sheet = Ani.get_sheet();
+          return expect(sheet.id).toEqual('ani_stylesheet');
+        });
+        return it('should should load an existing stylesheet', function() {
+          var sheet1, sheet2;
+          sheet1 = Ani.get_sheet();
+          sheet2 = Ani.get_sheet();
+          return expect(sheet1).toBe(sheet2);
+        });
+      });
+    });
   });
 }).call(this);

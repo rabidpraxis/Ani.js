@@ -1,7 +1,8 @@
 #===  Property  ==========================================================={{{1
+# Base Property class and handler of common values (px, %, str)
 class Property
   constructor: (@type, @input) ->
-    @value = @.parse_value @input[0]
+    @value = this.parse_value @input[0]
 
   property_types: ->
     [
@@ -14,19 +15,16 @@ class Property
 
   parse_value: (value) ->
     if typeof(value) is 'string'
-      @.parse_value_from_string(value)
+      this.parse_value_from_string(value)
     else if typeof(value) is 'number'
       value
     else if typeof(value) is 'object'
       value
 
   parse_value_from_string: (str) ->
-    if @.str_is_type(str, 'px')
+    if this.str_is_type(str, 'px')
       @type = 'length'
       parseInt(str.substring(0, str.length-2))
-    else if @.str_is_type(str, '#')
-      @type = 'hex_color'
-      str
 
   str_is_type: (str, type) ->
     str.indexOf(type) isnt -1
@@ -36,38 +34,44 @@ class Property
 class Color extends Property
   constructor: (@type, @input) ->
     if @type is 'colorRGB'
-      @value = @.parse_value
+      @value = this.parse_value
         r: @input[0]
         g: @input[1]
         b: @input[2]
     else if @type is 'colorHSV'
-      @value = @.parse_value
+      @value = this.parse_value
         h: @input[0]
         s: @input[1]
         v: @input[2]
     else
-      @value = @.parse_value @input
+      @value = this.parse_value @input[0]
+
+  parse_value_from_string: (str) ->
+    if this.str_is_type(str, '#')
+      @type = 'hex_color'
+      str
+
 #===========================================================================}}}
 #===  Translate < Property  ==============================================={{{1
 class Translate extends Property
   constructor: (@type, @input) ->
     if @type is 'translateX'
-      @value = {x: @.parse_value @input[0]}
+      @value = {x: this.parse_value @input[0]}
     else if @type is 'translateY'
-      @value = {y: @.parse_value @input[0]}
+      @value = {y: this.parse_value @input[0]}
     else if @type is 'translateZ'
-      @value = {z: @.parse_value @input[0]}
+      @value = {z: this.parse_value @input[0]}
 
 #===========================================================================}}}
 #===  Rotate < Property  ==============================================={{{1
 class Rotate extends Property
   constructor: (@type, @input) ->
     if @type is 'rotateX'
-      @value = {x: @.parse_value @input[0]}
+      @value = {x: this.parse_value @input[0]}
     else if @type is 'rotateY'
-      @value = {y: @.parse_value @input[0]}
+      @value = {y: this.parse_value @input[0]}
     else if @type is 'rotateZ'
-      @value = {z: @.parse_value @input[0]}
+      @value = {z: this.parse_value @input[0]}
 
   # TODO: parse deg, rad or grad types
 
@@ -75,7 +79,7 @@ class Rotate extends Property
 
 do ->
 
-  # The instruction set that Ani uses to construct its convientient animation
+  # The instruction set that Ani uses to construct its convenient animation
   # methods. This works by passing the (method name) to setup the prototype
   # method call and to tell Ani what to do with the value, the (CSS Name) is
   # used so Ani knows how to store or compare the value internally, and
@@ -102,35 +106,41 @@ do ->
 
   class window.Ani
     constructor: (@options) ->
-      @.init()
+      this.init()
 
     init: ->
       @keyframe_group = []
-      @.keyframe 0
-      @.setup_methods()
+      this.keyframe 0
+      this.setup_methods()
 
     keyframe: (key) ->
       @current_keyframe = key
       @keyframe_group[key] = @keyframe_group[key] || []
       this
 
+  #---  Private  --------------------------------------------------------------
+
     setup_methods: ->
       for meth_props in property_groups
-        @.wrap_prop_method meth_props[0], meth_props[1], meth_props[2]
-      this
+        this.wrap_prop_method meth_props[0], meth_props[1], meth_props[2]
 
-    wrap_prop_method: (method_name, prop_name, func) ->
-      @.add_method method_name, (value...) =>
-        @.property prop_name, new func(method_name, value)
+    wrap_prop_method: (method_name, prop_name, klass) ->
+      this.add_prototype_method method_name, (value...) =>
+        this.property prop_name, new klass(method_name, value)
         
-    add_method: (method_name, callback) ->
+    add_prototype_method: (method_name, callback) ->
       Ani.prototype[method_name] = callback
-      this
-
-  #===  Private  ================================================================
 
     property: (name, content) ->
       @keyframe_group[@current_keyframe][name] = content
       this
 
+  #---  Class Methods  -------------------------------------------------------
+  
+    Ani.get_sheet = ->
+      if not sheet = document.querySelector('#ani_stylesheet')
+        sheet = document.createElement("style")
+        sheet.setAttribute("id","ani_stylesheet")
+        document.documentElement.appendChild(sheet)
+      sheet
 # vim:fdm=marker

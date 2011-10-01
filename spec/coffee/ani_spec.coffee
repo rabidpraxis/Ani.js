@@ -130,13 +130,22 @@ describe 'Ani', ->
       ani.translateY('30px')
       expect(ani.keyframe_group[0]['translate3d'].value.y).toEqual 30
   #-------------------------------------------------------------------------}}}
-
+  #---  Output Stylesheet  ------------------------------------------------{{{1
   describe 'Create css rules', ->
-
-    
-
-
+    describe 'Ani stylesheet', ->
+      it 'should create a new sheet', ->
+        sheet = Ani.get_sheet()
+        expect(sheet.id).toEqual 'ani_stylesheet'
+      it 'should should load an existing stylesheet', ->
+        sheet1 = Ani.get_sheet()
+        sheet2 = Ani.get_sheet()
+        expect(sheet1).toBe sheet2
       
+        
+    
+  #-------------------------------------------------------------------------}}}
+        
+        
   
 #
 # vim:fdm=marker
