@@ -186,6 +186,15 @@ describe 'Ani', ->
         
     
   #-------------------------------------------------------------------------}}}
+
+  #---  Import Current Keyframe Rules  ------------------------------------{{{1
+  describe 'Parsing Keyframe Object', ->
+    it 'should find keyframe object', ->
+      ani = new Ani
+        parent: 'testing'
+      
+    
+  #-------------------------------------------------------------------------}}}
         
         
   

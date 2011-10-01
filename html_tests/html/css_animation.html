@@ -3,42 +3,56 @@
   <head>
     <script type='text/javascript'>
       //<![CDATA[
-        (function() {
-         var myBox = document.querySelector('#box'),
-             animating = false;
+        window.onload = function() {
+          (function() {
+           var myBox = document.querySelector('#box'),
+               animating = false;
         
-         myBox.onclick = function() {
-           var that = this;
-           animating = true;
-           console.log('clicked');
-           this.style.webkitAnimationFillMode = 'forwards';
-           this.style.webkitAnimation = 'testing 1s';
-           // setTimeout(function() { that.style.webkitAnimationPlayState = 'paused'; }, 500);
-           this.addEventListener('webkitAnimationIteration', function () {
-             console.log('iteration ended');
-             this.style.webkitAnimationPlayState = 'paused';
-           })
-           this.addEventListener('webkitAnimationEnd', function(){
-             console.log('ended');
-             this.style.webkitAnimationPlayState = 'paused';
-           },false);
-           // this.addEventListener(animationend, function(){
-           //   callfunction()
-           // },false);
-         }
-        }())
+           myBox.onclick = function() {
+             var that = this;
+             animating = true;
+             console.log('clicked');
+             this.style.webkitAnimationFillMode = 'forwards';
+             this.style.webkitAnimationName = 'testing';
+             this.style.webkitAnimationDuration = '1s';
+             this.style.MozAnimationFillMode = 'forwards';
+             this.style.MozAnimationName = 'testing';
+             this.style.MozAnimationDuration = '1s';
+             //setTimeout(function() { that.style.webkitAnimationPlayState = 'paused'; }, 500);
+             this.addEventListener('webkitAnimationIteration', function () {
+               console.log('iteration ended');
+               //this.style.webkitAnimationPlayState = 'paused';
+             })
+             this.addEventListener('webkitAnimationEnd', function(){
+               console.log('ended');
+               //this.style.webkitAnimationPlayState = 'paused';
+             },false);
+             // this.addEventListener(animationend, function(){
+             //   callfunction()
+             // },false);
+           }
+          }())
+        }
       //]]>
     </script>
     <style>
       #box {
-        -webkit-animation-name: testing;
-        -webkit-animation-duration: 1s;
-        -webkit-animation-fill-mode: forwards;
         position: absolute;
         border: 1px #444444 solid;
         width: 200px;
         height: 200px;
         background-color: #aaaaaa; }
+      
+      @-moz-keyframes testing {
+        from {
+          -moz-box-shadow: rgba(0, 0, 0, 0.4) 0px 0px 10px;
+          background-color: rgba(100, 100, 0, 0.75); }
+      
+        to {
+          background-color: rgba(0, 100, 0, 0.75);
+          -moz-box-shadow: rgba(0, 0, 0, 0.4) 10px 10px 10px;
+          -moz-transform: translateX(700px) rotate(20deg);
+          -moz-transform-origin: translateX(700px); } }
       
       @-webkit-keyframes testing {
         from {

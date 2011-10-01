@@ -152,7 +152,7 @@
         return expect(ani.actions[0]['color'].value.r).toEqual(200);
       });
     });
-    return describe('Create css rules', function() {
+    describe('Create css rules', function() {
       describe('Ani stylesheet', function() {
         it('should create a new sheet', function() {
           var sheet;
@@ -178,6 +178,13 @@
         return it('should output border-width style', function() {
           ani.border_width('5px');
           return expect(ani.actions[0]['border_width'].css()).toBe('border-width: 5px;');
+        });
+      });
+    });
+    return describe('Parsing Keyframe Object', function() {
+      return it('should find keyframe object', function() {
+        return ani = new Ani({
+          parent: 'testing'
         });
       });
     });

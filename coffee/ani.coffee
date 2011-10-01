@@ -1,3 +1,5 @@
+#===  Globals  ================================================================
+
 #===  Property  ==========================================================={{{1
 # Base Property class and handler of common values (px, %, str)
 class Property
@@ -111,6 +113,20 @@ class Rotate extends Property
   # TODO: parse deg, rad or grad types
 
 #===========================================================================}}}
+#===  Utilities Helper  ==================================================={{{1
+Utils =
+  contains: (string, match) ->
+    string.indexOf(match) isnt -1
+
+  get_browser_prefix: ->
+    agent = navigator.userAgent
+    return ['Moz', '-moz'] if Utils.contains(agent, 'Firefox')
+    return ['webkit', '-webkit'] if Utils.contains(agent, 'Safari')
+    return ['webkit', '-webkit'] if Utils.contains(agent, 'Chrome')
+    throw "Ani.js does not support this browser"
+#===========================================================================}}}
+
+ani_browser_prefix = Utils.get_browser_prefix()
 
 do ->
 
