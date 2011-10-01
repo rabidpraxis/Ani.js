@@ -89,46 +89,71 @@ describe 'Ani', ->
     it 'should start with 0', ->
       expect(ani.current_keyframe).toEqual 0
   #-------------------------------------------------------------------------}}}
-  #---  Solid Properties  -------------------------------------------------{{{1
+  #---  Solid Starting Properties  ---------------------------------------------{{{1
   describe 'Solid Properties', ->
     it 'should store border width', ->
       ani.border_width(20)
-      expect(ani.keyframe_group[0]['border_width'].value).toEqual 20
+      expect(ani.actions[0]['border_width'].value).toEqual 20
 
     it 'should store height', ->
       ani.height(9)
-      expect(ani.keyframe_group[0]['height'].value).toEqual 9
+      expect(ani.actions[0]['height'].value).toEqual 9
 
     it 'should store colors', ->
       ani.color('#fff')
-      expect(ani.keyframe_group[0]['color'].value).toMatch /fff/
+      expect(ani.actions[0]['color'].value).toMatch /fff/
 
     it 'should store functions', ->
       ani.colorRGB(155, 100, 100)
-      expect(ani.keyframe_group[0]['color'].value.r).toEqual 155
+      expect(ani.actions[0]['color'].value.r).toEqual 155
 
     it 'should allow translate functions', ->
       ani.translateX(20)
-      expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual 20
+      expect(ani.actions[0]['translate3d'].value.x).toEqual 20
       
     it 'should store multiple functions', ->
       ani.translateX(20)
          .rotateX(20)
-      expect(ani.keyframe_group[0]['translate3d'].value.x).toEqual 20
+      expect(ani.actions[0]['translate3d'].value.x).toEqual 20
+
+    it 'should have multiple arguments for translate3d', ->
+      ani.translate3d(100, 100, '10%')
+      expect(ani.actions[0]['translate3d'].value.z).toEqual 10
+      
   #-------------------------------------------------------------------------}}}
-  #---  String Properties  ------------------------------------------------{{{1
+  #---  Solid Updating Properties  ----------------------------------------{{{1
+    it 'should update translate property', ->
+      ani.translateX(20)
+         .translateY(300)
+      expect(ani.actions[0]['translate3d'].value.x).toEqual 20
+
+    it 'should update height value', ->
+      ani.height(400)
+         .height(10)
+      expect(ani.actions[0]['height'].value).toEqual 10
+  #-------------------------------------------------------------------------}}}
+  #---  String Starting Properties  -------------------------------------------{{{1
   describe 'String Properties', ->
     it 'should store border width', ->
       ani.border_width('20px')
-      expect(ani.keyframe_group[0]['border_width'].value).toEqual 20
+      expect(ani.actions[0]['border_width'].value).toEqual 20
     
     it 'should store height', ->
       ani.height('800px')
-      expect(ani.keyframe_group[0]['height'].value).toEqual 800
+      expect(ani.actions[0]['height'].value).toEqual 800
 
     it 'should store single property translation', ->
       ani.translateY('30px')
-      expect(ani.keyframe_group[0]['translate3d'].value.y).toEqual 30
+      expect(ani.actions[0]['translate3d'].value.y).toEqual 30
+  #-------------------------------------------------------------------------}}}
+  #---  Object Starting Properties  ---------------------------------------{{{1
+  describe 'Object properties', ->
+    it 'should create translateX from object', ->
+      ani.translate({x: 200, y: 100})
+      expect(ani.actions[0]['translate3d'].value.x).toEqual 200
+    it 'should create color from object', ->
+      ani.color({r: 200})
+      expect(ani.actions[0]['color'].value.r).toEqual 200
   #-------------------------------------------------------------------------}}}
   #---  Output Stylesheet  ------------------------------------------------{{{1
   describe 'Create css rules', ->
@@ -140,6 +165,23 @@ describe 'Ani', ->
         sheet1 = Ani.get_sheet()
         sheet2 = Ani.get_sheet()
         expect(sheet1).toBe sheet2
+
+    describe 'style output', ->
+      it 'should output height style rule', ->
+        ani.height(20)
+        expect(ani.actions[0]['height'].css()).toBe 'height: 20px;'
+
+      it 'should output height percentage style rule', ->
+        ani.height('20%')
+        expect(ani.actions[0]['height'].css()).toBe 'height: 20%;'
+
+      it 'should output border-width style', ->
+        ani.border_width('5px')
+        expect(ani.actions[0]['border_width'].css()).toBe 'border-width: 5px;'
+        
+        
+      
+
       
         
     
